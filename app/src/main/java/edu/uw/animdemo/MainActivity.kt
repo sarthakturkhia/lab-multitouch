@@ -65,15 +65,36 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
             MotionEvent.ACTION_MOVE //move finger
-            ->
-                //Log.v(TAG, "finger move");
-                //                view.ball.cx = x;
-                //                view.ball.cy = y;
+            -> {
+                Log.v(TAG, "finger move");
+                view!!.ball.cx = x;
+                view!!.ball.cy = y;
+                val count = event.pointerCount
+                for (i in 0 until count) {
+                    val id = event.getPointerId(i)
+                    val currX = event.getX(id)
+                    val currY = event.getY(id) - supportActionBar!!.height
+                    view!!.moveTouch(id, currX, currY)
+                }
                 return true
+            }
+            MotionEvent.ACTION_POINTER_DOWN
+            ->{
+                Log.v(TAG, "Second finger Down")
+                var index = MotionEventCompat.getActionIndex(event)
+                Log.v(TAG, "Event Index: $index")
+                var pointerindex = event.actionIndex
+                Log.v(TAG, "Event Index: $pointerindex")
+                val pointerid = event.getPointerId(pointerindex)
+                view!!.ball.cx = x
+                view!!.ball.cy = y
+                view!!.addTouch(pointerid, x, y)
+                return true
+            }
             MotionEvent.ACTION_UP //lift finger up
                 , MotionEvent.ACTION_CANCEL //aborted gesture
                 , MotionEvent.ACTION_OUTSIDE //outside bounds
-            -> return super.onTouchEvent(event)
+            -> {return super.onTouchEvent(event)}
             else -> return super.onTouchEvent(event)
         }
     }
